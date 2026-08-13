@@ -12,6 +12,7 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QQuickPaintedItem>
+#include <QtMath>
 
 #include "common.h"
 

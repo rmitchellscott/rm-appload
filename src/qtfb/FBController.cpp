@@ -72,12 +72,14 @@ void FBController::associateSHM(QImage *image) {
 
 void FBController::markedUpdate(const QRect &rect) {
     isMidPaint = true;
-    if(_allowScaling && image) {
+    // Qt reads an empty rect as "repaint the whole item", which is how a full
+    // update arrives, so scaling has to leave it alone and divide last
+    if(_allowScaling && image && !rect.isEmpty()) {
+        const qreal scaleX = this->width() / image->width();
+        const qreal scaleY = this->height() / image->height();
         update(QRect(
-           (rect.x() / image->width()) * this->width(),
-           (rect.y() / image->height()) * this->height(),
-           (rect.width() / image->width()) * this->width(),
-           (rect.height() / image->height()) * this->height()
+           QPoint(qFloor(rect.left() * scaleX), qFloor(rect.top() * scaleY)),
+           QPoint(qCeil(rect.right() * scaleX), qCeil(rect.bottom() * scaleY))
         ));
     } else {
         update(rect);
